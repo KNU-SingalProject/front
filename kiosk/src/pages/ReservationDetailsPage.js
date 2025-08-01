@@ -1,4 +1,4 @@
-// src/pages/ReservationDetailsPage.js (예약 완료 메시지 수정 최종 버전)
+// src/pages/ReservationDetailsPage.js (에러 모달 닫기 로직 수정 최종 버전)
 
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
@@ -8,6 +8,7 @@ import backIcon from '../arrow_back.png';
 import homeIcon from '../home_icon.png';
 import ErrorModal from '../components/ErrorModal';
 import SuccessModal from '../components/SuccessModal';
+import PhoneSelectionModal from '../components/PhoneSelectionModal';
 
 const formatBirthDate = (birth) => {
   if (birth.length !== 6) return null;
@@ -27,15 +28,25 @@ function ReservationDetailsPage() {
   const [name, setName] = useState('');
   const [birth, setBirth] = useState('');
   
+  const [isPhoneModalOpen, setIsPhoneModalOpen] = useState(false);
+  const [phoneOptions, setPhoneOptions] = useState([]);
+  const [pendingReservist, setPendingReservist] = useState(null);
+
   const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
 
   const showErrorModal = (message) => { setErrorMessage(message); setIsErrorModalOpen(true); };
-  const closeErrorModal = () => { setIsErrorModalOpen(false); setErrorMessage(''); };
   const showSuccessModalWithMessage = (message) => { setSuccessMessage(message); setIsSuccessModalOpen(true); };
   const closeModalAndNavigateHome = () => { setIsSuccessModalOpen(false); navigate('/'); };
+  const closePhoneModal = () => { setIsPhoneModalOpen(false); setPhoneOptions([]); setPendingReservist(null); };
+
+  // ✨ 1. 에러 모달을 닫기만 하는 전용 함수를 만듭니다. (홈으로 이동하지 않습니다)
+  const closeErrorModal = () => {
+    setIsErrorModalOpen(false);
+    setErrorMessage(''); // 에러 메시지 상태를 초기화합니다.
+  };
 
   const handleAddReservist = async () => {
     const trimmedName = name.trim();
@@ -59,10 +70,23 @@ function ReservationDetailsPage() {
     const payload = { name: trimmedName, birth: formattedBirth };
 
     try {
-      await axios.post('http://43.201.162.230:8000/users/log-in', payload);
-      setReservists([...reservists, { name: trimmedName, birth: trimmedBirth }]);
-      setName('');
-      setBirth('');
+      const response = await axios.post('http://43.201.162.230:8000/users/log-in', payload);
+
+      if (response.data && Array.isArray(response.data.phone_numbers) && response.data.phone_numbers.length > 0) {
+        setPendingReservist({ name: trimmedName, birth: trimmedBirth });
+        setPhoneOptions(response.data.phone_numbers);
+        setIsPhoneModalOpen(true);
+      } else {
+        const newUser = { name: trimmedName, birth: trimmedBirth, phone: null };
+        const isAlreadyAdded = reservists.some(p => p.name === newUser.name && p.birth === newUser.birth && p.phone === null);
+        if(isAlreadyAdded) {
+            showErrorModal('이미 명단에 추가된 사용자입니다.');
+            return;
+        }
+        setReservists([...reservists, newUser]);
+        setName('');
+        setBirth('');
+      }
     } catch (error) {
       console.error('회원 검증 중 오류 발생:', error);
       if (error.response && error.response.status === 404) {
@@ -73,30 +97,36 @@ function ReservationDetailsPage() {
     }
   };
 
+  const handlePhoneConfirm = (selectedPhone) => {
+    const isAlreadyAdded = reservists.some(p => p.phone === selectedPhone);
+    if(isAlreadyAdded) {
+      showErrorModal('해당 전화번호의 사용자는 이미 명단에 있습니다.');
+      closePhoneModal();
+      return;
+    }
+    setReservists([...reservists, { name: pendingReservist.name, birth: pendingReservist.birth, phone: selectedPhone }]);
+    setName('');
+    setBirth('');
+    closePhoneModal();
+  };
+
   const handleCompleteReservation = () => {
     if (reservists.length === 0) {
       showErrorModal('최소 한 명 이상의 예약자를 추가해야 합니다.');
       return;
     }
-    
-    // ✨✨✨ 바로 이 부분이 요청하신 내용입니다! ✨✨✨
-    // reservists 배열에서 이름만 추출하여 각 이름 뒤에 '님'을 붙인 새 배열을 만듭니다.
     const nameList = reservists.map(person => `${person.name}님`);
-    
-    // '님'이 붙은 이름들을 쉼표와 공백(', ')으로 연결하여 하나의 문자열로 만듭니다.
     const formattedNames = nameList.join(', ');
-
-    // ✨ 환영 메시지를 예약 완료 메시지로 변경합니다.
     const finalMessage = `${formattedNames} 예약을 완료했습니다!`;
-
-    // 완성된 메시지를 모달에 전달합니다.
     showSuccessModalWithMessage(finalMessage);
-    // ❗️ 실제로는 이 위에서 백엔드에 예약 완료 API를 호출해야 합니다.
   };
 
   return (
     <div className="container details-container">
+      {isPhoneModalOpen && <PhoneSelectionModal phoneNumbers={phoneOptions} onConfirm={handlePhoneConfirm} onCancel={closePhoneModal} />}
       {isSuccessModalOpen && <SuccessModal message={successMessage} onClose={closeModalAndNavigateHome} />}
+      
+      {/* ✨ 2. ErrorModal의 onClose prop에 새로운 함수를 연결합니다. */}
       {isErrorModalOpen && <ErrorModal message={errorMessage} onClose={closeErrorModal} />}
 
       <Link to="/reservation" className="back-button"> <img src={backIcon} alt="뒤로가기" className="back-icon" /> </Link>
@@ -122,21 +152,8 @@ function ReservationDetailsPage() {
 
         <section className="reservation-form-section">
           <p className="form-guide">시설을 같이 이용할 분들 모두 적어주세요.</p>
-          <input 
-            type="text" 
-            placeholder="이름" 
-            className="details-input" 
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
-          <input 
-            type="text" 
-            placeholder="생년월일 (6자리)" 
-            className="details-input"
-            value={birth}
-            onChange={(e) => setBirth(e.target.value)}
-            maxLength="6"
-          />
+          <input type="text" placeholder="이름" className="details-input" value={name} onChange={(e) => setName(e.target.value)} />
+          <input type="text" placeholder="생년월일 (6자리)" className="details-input" value={birth} onChange={(e) => setBirth(e.target.value)} maxLength="6" />
           <button className="details-btn add" onClick={handleAddReservist}>예약자 추가</button>
           <button className="details-btn complete" onClick={handleCompleteReservation}>예약 완료</button>
         </section>

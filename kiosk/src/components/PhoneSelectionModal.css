@@ -1,0 +1,82 @@
+/* src/components/PhoneSelectionModal.css */
+
+.phone-modal-content {
+    background-color: white;
+    padding: 30px;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+  }
+  
+  .phone-modal-title {
+    font-size: 22px;
+    font-weight: bold;
+    margin: 0 0 10px 0;
+  }
+  
+  .phone-modal-subtitle {
+    font-size: 16px;
+    color: #666;
+    margin: 0 0 25px 0;
+  }
+  
+  .phone-selection-list {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 30px;
+    text-align: left;
+  }
+  
+  .phone-selection-list li {
+    padding: 12px 15px;
+    display: flex;
+    align-items: center;
+    font-size: 18px;
+    border-top: 1px solid #eee;
+  }
+  .phone-selection-list li:last-child {
+    border-bottom: 1px solid #eee;
+  }
+  
+  .phone-selection-list li input[type="radio"] {
+    margin-right: 15px;
+    width: 18px;
+    height: 18px;
+  }
+  
+  .phone-selection-list li label {
+    cursor: pointer;
+  }
+  
+  .phone-modal-buttons {
+    display: flex;
+    gap: 15px;
+  }
+  
+  .modal-btn {
+    flex: 1;
+    padding: 12px 20px;
+    border-radius: 10px;
+    border: none;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .modal-btn.cancel {
+    background-color: #f0f0f0;
+    color: #555;
+  }
+  .modal-btn.cancel:hover {
+    background-color: #e0e0e0;
+  }
+  
+  .modal-btn.confirm {
+    background-color: #5a9ad5;
+    color: white;
+  }
+  .modal-btn.confirm:hover {
+    background-color: #4a8ac4;
+  }
