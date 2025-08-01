@@ -1,0 +1,62 @@
+/* src/components/ErrorModal.css */
+
+/* .modal-overlay, .modal-divider, .modal-button 스타일은 SuccessModal.css와 동일하게 사용 가능합니다. */
+/* 하지만 명확성을 위해 여기에 다시 정의합니다. */
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .error-modal-content {
+    background-color: #d9534f; /* 에러를 나타내는 붉은색 계열 */
+    color: white;
+    padding: 30px 40px;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 450px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  }
+  
+  .error-modal-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0;
+  }
+  
+  .error-modal-message {
+    font-size: 18px;
+    margin: 20px 0;
+  }
+  
+  .modal-divider {
+    border-top: 1.5px solid rgba(255, 255, 255, 0.5);
+    margin: 25px 0;
+  }
+  
+  .modal-button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 22px;
+    font-weight: bold;
+    cursor: pointer;
+    width: 100%;
+    padding: 10px;
+  }
+  
+  .error-modal-message {
+    font-size: 18px;
+    margin: 20px 0;
+    /* ✨ 이 한 줄을 추가해주세요. 줄 바꿈(\n) 문자를 인식하게 만듭니다. */
+    white-space: pre-wrap;
+  }
