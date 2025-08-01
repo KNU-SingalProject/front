@@ -1,17 +1,16 @@
-// src/pages/ReservationDetailsPage.js (실시간 회원 검증 기능 추가 최종 버전)
+// src/pages/ReservationDetailsPage.js (예약 완료 메시지 수정 최종 버전)
 
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import axios from 'axios'; // ✨ axios import
+import axios from 'axios';
 import './ReservationDetailsPage.css';
 import backIcon from '../arrow_back.png';
 import homeIcon from '../home_icon.png';
 import ErrorModal from '../components/ErrorModal';
 import SuccessModal from '../components/SuccessModal';
 
-// ✨ 1. VisitPage에서 사용했던 생년월일 변환 함수를 가져옵니다.
 const formatBirthDate = (birth) => {
-  if (birth.length !== 6) return null; // 6자리가 아니면 유효하지 않음
+  if (birth.length !== 6) return null;
   let yearPrefix = parseInt(birth.substring(0, 2), 10) > 50 ? '19' : '20';
   let year = yearPrefix + birth.substring(0, 2);
   let month = birth.substring(2, 4);
@@ -24,7 +23,6 @@ function ReservationDetailsPage() {
   const navigate = useNavigate();
   const facility = location.state?.facility || 'OOO';
 
-  // --- 상태 관리 ---
   const [reservists, setReservists] = useState([]);
   const [name, setName] = useState('');
   const [birth, setBirth] = useState('');
@@ -34,14 +32,11 @@ function ReservationDetailsPage() {
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
 
-  // --- 모달 함수 ---
   const showErrorModal = (message) => { setErrorMessage(message); setIsErrorModalOpen(true); };
   const closeErrorModal = () => { setIsErrorModalOpen(false); setErrorMessage(''); };
-  const showSuccessModal = (message) => { setSuccessMessage(message); setIsSuccessModalOpen(true); };
+  const showSuccessModalWithMessage = (message) => { setSuccessMessage(message); setIsSuccessModalOpen(true); };
   const closeModalAndNavigateHome = () => { setIsSuccessModalOpen(false); navigate('/'); };
 
-  // --- 함수 로직 ---
-  // ✨ 2. '예약자 추가' 버튼의 로직을 백엔드 검증 기능으로 전면 수정
   const handleAddReservist = async () => {
     const trimmedName = name.trim();
     const trimmedBirth = birth.trim();
@@ -55,36 +50,24 @@ function ReservationDetailsPage() {
       return;
     }
 
-    // ✨ 3. 6자리 생년월일을 YYYY-MM-DD 형식으로 변환
     const formattedBirth = formatBirthDate(trimmedBirth);
     if (!formattedBirth) {
       showErrorModal('생년월일 6자리를 올바르게 입력해주세요.');
       return;
     }
 
-    const payload = {
-      name: trimmedName,
-      birth: formattedBirth,
-    };
+    const payload = { name: trimmedName, birth: formattedBirth };
 
     try {
-      // ✨ 4. 백엔드에 회원 여부 확인 요청 (VisitPage와 동일한 API 사용)
-      // 이 요청이 성공하면 (catch로 빠지지 않으면) 등록된 회원으로 간주합니다.
       await axios.post('http://43.201.162.230:8000/users/log-in', payload);
-
-      // ✨ 5. 검증 성공 시에만 예약자 명단(reservists) state에 추가
       setReservists([...reservists, { name: trimmedName, birth: trimmedBirth }]);
       setName('');
       setBirth('');
-
     } catch (error) {
-      // ✨ 6. 검증 실패 시 에러 처리
       console.error('회원 검증 중 오류 발생:', error);
       if (error.response && error.response.status === 404) {
-        // 백엔드가 404 응답을 주는 경우
         showErrorModal('등록되지 않은 회원입니다. 추가할 수 없습니다.');
       } else {
-        // 그 외 다른 에러 (네트워크 문제 등)
         showErrorModal('회원 확인 중 오류가 발생했습니다.');
       }
     }
@@ -95,15 +78,25 @@ function ReservationDetailsPage() {
       showErrorModal('최소 한 명 이상의 예약자를 추가해야 합니다.');
       return;
     }
-    // ❗️ 최종적으로 이 'reservists' 배열을 백엔드에 보내 예약 확정 API를 호출해야 합니다.
-    // 예: await axios.post('/api/complete-reservation', { facility, users: reservists });
-    showSuccessModal(`${facility} 예약이 완료되었습니다.`);
+    
+    // ✨✨✨ 바로 이 부분이 요청하신 내용입니다! ✨✨✨
+    // reservists 배열에서 이름만 추출하여 각 이름 뒤에 '님'을 붙인 새 배열을 만듭니다.
+    const nameList = reservists.map(person => `${person.name}님`);
+    
+    // '님'이 붙은 이름들을 쉼표와 공백(', ')으로 연결하여 하나의 문자열로 만듭니다.
+    const formattedNames = nameList.join(', ');
+
+    // ✨ 환영 메시지를 예약 완료 메시지로 변경합니다.
+    const finalMessage = `${formattedNames} 예약을 완료했습니다!`;
+
+    // 완성된 메시지를 모달에 전달합니다.
+    showSuccessModalWithMessage(finalMessage);
+    // ❗️ 실제로는 이 위에서 백엔드에 예약 완료 API를 호출해야 합니다.
   };
 
-  // --- UI 렌더링 ---
   return (
     <div className="container details-container">
-      {isSuccessModalOpen && <SuccessModal name={successMessage} onClose={closeModalAndNavigateHome} />}
+      {isSuccessModalOpen && <SuccessModal message={successMessage} onClose={closeModalAndNavigateHome} />}
       {isErrorModalOpen && <ErrorModal message={errorMessage} onClose={closeErrorModal} />}
 
       <Link to="/reservation" className="back-button"> <img src={backIcon} alt="뒤로가기" className="back-icon" /> </Link>
@@ -118,7 +111,6 @@ function ReservationDetailsPage() {
             {reservists.length > 0 ? (
               reservists.map((person, index) => (
                 <div key={index} className="reservist-card">
-                  {/* ✨ 화면에는 6자리 생년월일을 그대로 표시 */}
                   {`${person.name} / ${person.birth}`}
                 </div>
               ))
