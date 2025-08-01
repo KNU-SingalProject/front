@@ -1,21 +1,21 @@
 {
   "files": {
-    "main.css": "/kangnamthon/static/css/main.e440e16e.css",
-    "main.js": "/kangnamthon/static/js/main.41c2e60c.js",
-    "static/js/453.d811e87f.chunk.js": "/kangnamthon/static/js/453.d811e87f.chunk.js",
-    "static/media/nintendo.png": "/kangnamthon/static/media/nintendo.8f956ebc037686c744f8.png",
-    "static/media/karaoke.png": "/kangnamthon/static/media/karaoke.74dd889e036aa4fa8498.png",
-    "static/media/padminton.png": "/kangnamthon/static/media/padminton.8dea52f25d583ad0af18.png",
-    "static/media/computer.png": "/kangnamthon/static/media/computer.4aa9d4bc2f3a2364b8f3.png",
-    "static/media/background.jpg": "/kangnamthon/static/media/background.6a19ca257278ba002fe4.jpg",
-    "static/media/kiosk_ikon.png": "/kangnamthon/static/media/kiosk_ikon.362b59a02c5e3a23137a.png",
-    "index.html": "/kangnamthon/index.html",
-    "main.e440e16e.css.map": "/kangnamthon/static/css/main.e440e16e.css.map",
-    "main.41c2e60c.js.map": "/kangnamthon/static/js/main.41c2e60c.js.map",
-    "453.d811e87f.chunk.js.map": "/kangnamthon/static/js/453.d811e87f.chunk.js.map"
+    "main.css": "/front/static/css/main.1e2b5ca5.css",
+    "main.js": "/front/static/js/main.2d26e1b1.js",
+    "static/js/453.d811e87f.chunk.js": "/front/static/js/453.d811e87f.chunk.js",
+    "static/media/nintendo.png": "/front/static/media/nintendo.8f956ebc037686c744f8.png",
+    "static/media/karaoke.png": "/front/static/media/karaoke.74dd889e036aa4fa8498.png",
+    "static/media/padminton.png": "/front/static/media/padminton.8dea52f25d583ad0af18.png",
+    "static/media/computer.png": "/front/static/media/computer.4aa9d4bc2f3a2364b8f3.png",
+    "static/media/background.jpg": "/front/static/media/background.6a19ca257278ba002fe4.jpg",
+    "static/media/kiosk_ikon.png": "/front/static/media/kiosk_ikon.362b59a02c5e3a23137a.png",
+    "index.html": "/front/index.html",
+    "main.1e2b5ca5.css.map": "/front/static/css/main.1e2b5ca5.css.map",
+    "main.2d26e1b1.js.map": "/front/static/js/main.2d26e1b1.js.map",
+    "453.d811e87f.chunk.js.map": "/front/static/js/453.d811e87f.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.e440e16e.css",
-    "static/js/main.41c2e60c.js"
+    "static/css/main.1e2b5ca5.css",
+    "static/js/main.2d26e1b1.js"
   ]
 }
