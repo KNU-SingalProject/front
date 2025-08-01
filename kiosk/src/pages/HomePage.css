@@ -1,0 +1,54 @@
+/* src/pages/HomePage.css */
+
+.header {
+  margin-bottom: 60px;
+}
+
+.logo-img {
+  width: 90%;
+  max-width: 460px;
+  height: auto;
+}
+
+.main-content {
+  display: flex;
+  gap: 60px;
+}
+
+.main-content .btn {
+  background-color: #3b82c4;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 18px 80px;
+  font-size: 19px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  white-space: nowrap;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  text-decoration: none; /* Link 태그로 인해 생기는 밑줄 제거 */
+}
+
+.main-content .btn:hover {
+  background-color: #3270ab;
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+  .header {
+    margin-bottom: 50px;
+  }
+
+  .main-content {
+    flex-direction: column;
+    width: 85%;
+    gap: 25px;
+  }
+  
+  .main-content .btn {
+    width: 100%;
+    padding: 16px 20px;
+    font-size: 17px;
+  }
+}

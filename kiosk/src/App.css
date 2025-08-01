@@ -1,0 +1,29 @@
+/* src/App.css */
+
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  text-align: center;
+  box-sizing: border-box;
+  padding: 20px;
+
+  /* 모든 페이지에 적용될 공용 배경 */
+  background-color: #e0eaf6;
+  background-image:
+    linear-gradient(rgba(224, 234, 246, 0.7), rgba(224, 234, 246, 0.7)),
+    /* 사용하신다고 했던 배경 이미지를 사용합니다. */
+    url('kiosk_background.png'); 
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}

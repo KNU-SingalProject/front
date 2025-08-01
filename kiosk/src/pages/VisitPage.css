@@ -1,0 +1,57 @@
+/* src/pages/VisitPage.css */
+
+.header {
+    margin-bottom: 20px;
+  }
+  
+  .logo-img {
+    width: 90%;
+    max-width: 400px; /* 이 페이지에서는 로고를 약간 작게 조정 */
+    height: auto;
+  }
+  
+  .subtitle {
+    color: #555;
+    font-size: 16px;
+    margin-bottom: 30px;
+  }
+  
+  .visit-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px; /* 입력창 사이의 간격 */
+    width: 100%;
+    max-width: 400px; /* 폼의 최대 너비 */
+  }
+  
+  .input-field {
+    width: 100%;
+    padding: 15px 20px;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    font-size: 16px;
+    box-sizing: border-box; /* 패딩이 너비에 영향을 주지 않도록 함 */
+  }
+  
+  .input-field::placeholder {
+    color: #aaa;
+  }
+  
+  .submit-btn {
+    width: 100%;
+    padding: 15px 20px;
+    background-color: #5a9ad5; /* 이미지와 유사한 버튼 색상 */
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 15px; /* 입력창과 버튼 사이의 간격 */
+  }
+  
+  .submit-btn:hover {
+    background-color: #4a8ac4;
+  }
