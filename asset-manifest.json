@@ -1,0 +1,21 @@
+{
+  "files": {
+    "main.css": "/kangnamthon/static/css/main.e440e16e.css",
+    "main.js": "/kangnamthon/static/js/main.41c2e60c.js",
+    "static/js/453.d811e87f.chunk.js": "/kangnamthon/static/js/453.d811e87f.chunk.js",
+    "static/media/nintendo.png": "/kangnamthon/static/media/nintendo.8f956ebc037686c744f8.png",
+    "static/media/karaoke.png": "/kangnamthon/static/media/karaoke.74dd889e036aa4fa8498.png",
+    "static/media/padminton.png": "/kangnamthon/static/media/padminton.8dea52f25d583ad0af18.png",
+    "static/media/computer.png": "/kangnamthon/static/media/computer.4aa9d4bc2f3a2364b8f3.png",
+    "static/media/background.jpg": "/kangnamthon/static/media/background.6a19ca257278ba002fe4.jpg",
+    "static/media/kiosk_ikon.png": "/kangnamthon/static/media/kiosk_ikon.362b59a02c5e3a23137a.png",
+    "index.html": "/kangnamthon/index.html",
+    "main.e440e16e.css.map": "/kangnamthon/static/css/main.e440e16e.css.map",
+    "main.41c2e60c.js.map": "/kangnamthon/static/js/main.41c2e60c.js.map",
+    "453.d811e87f.chunk.js.map": "/kangnamthon/static/js/453.d811e87f.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.e440e16e.css",
+    "static/js/main.41c2e60c.js"
+  ]
+}
