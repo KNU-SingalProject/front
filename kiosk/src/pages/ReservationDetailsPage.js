@@ -1,4 +1,4 @@
-// src/pages/ReservationDetailsPage.js (뒤로가기 기능 수정 최종 버전)
+// src/pages/ReservationDetailsPage.js (handleBackClick 함수 추가 최종 버전)
 
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
@@ -145,9 +145,6 @@ function ReservationDetailsPage() {
       }
     }
 
-    console.log(`API URL: ${apiUrl}`);
-    console.log("백엔드로 전송할 최종 데이터 (Payload):", JSON.stringify(payload, null, 2));
-
     try {
       await axios.post(apiUrl, payload);
       const nameList = reservists.map(person => `${person.name}님`);
@@ -156,12 +153,20 @@ function ReservationDetailsPage() {
       showSuccessModalWithMessage(finalMessage);
     } catch (error) {
       console.error('예약 완료 중 오류 발생:', error);
-      if (error.response && error.response.status === 422) {
-        const errorDetail = error.response.data?.detail;
-        if(typeof errorDetail === 'string') {
+      if (error.response) {
+        if (error.response.status === 403) {
+          showErrorModal('오늘 이 시설을 한 번 사용한 적이 있습니다.');
+        } 
+        else if (error.response.status === 422) {
+          const errorDetail = error.response.data?.detail;
+          if (typeof errorDetail === 'string') {
             showErrorModal(errorDetail);
-        } else {
+          } else {
             showErrorModal('입력된 정보가 서버의 규칙과 맞지 않습니다.');
+          }
+        } 
+        else {
+          showErrorModal('예약 완료에 실패했습니다. 관리자에게 문의하세요.');
         }
       } else {
         showErrorModal('예약 완료에 실패했습니다. 관리자에게 문의하세요.');
@@ -169,6 +174,7 @@ function ReservationDetailsPage() {
     }
   };
 
+  // ✨✨✨ 바로 이 부분이 누락되었던 함수입니다! ✨✨✨
   const handleBackClick = async () => {
     try {
       const response = await axios.get('http://43.201.162.230:8000/facility/facilities/status');
