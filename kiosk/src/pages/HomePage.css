@@ -1,18 +1,22 @@
-/* src/pages/HomePage.css */
+/* src/pages/HomePage.css (크기 및 간격 확장 버전) */
 
 .header {
-  margin-bottom: 60px;
+  /* ✨ 변경점: 로고와 버튼 사이의 세로 간격을 더 넓혔습니다. (60px -> 70px) */
+  margin-bottom: 70px;
 }
 
 .logo-img {
-  width: 90%;
-  max-width: 460px;
+  width: 100%;
+  /* ✨ 변경점: 로고의 최대 크기를 더 키웠습니다. (460px -> 500px) */
+  max-width: 700px;
   height: auto;
+  margin-bottom: 120px;
 }
 
 .main-content {
   display: flex;
-  gap: 60px;
+  /* ✨ 변경점: 버튼 사이의 가로 간격을 더 넓혔습니다. (60px -> 80px) */
+  gap: 90px;
 }
 
 .main-content .btn {
@@ -20,19 +24,22 @@
   color: white;
   border: none;
   border-radius: 12px;
-  padding: 18px 80px;
-  font-size: 19px;
+  /* ✨ 변경점: 버튼의 전체적인 크기를 키웠습니다. (상하 18px -> 20px, 좌우 80px -> 90px) */
+  padding: 26px 120px;
+  /* ✨ 변경점: 버튼 크기에 맞춰 폰트 크기도 키웠습니다. (19px -> 20px) */
+  font-size: 22px;
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.3s;
   white-space: nowrap;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  text-decoration: none; /* Link 태그로 인해 생기는 밑줄 제거 */
+  text-decoration: none;
 }
 
 .main-content .btn:hover {
   background-color: #3270ab;
 }
+
 
 /* 반응형 */
 @media (max-width: 768px) {
@@ -49,6 +56,6 @@
   .main-content .btn {
     width: 100%;
     padding: 16px 20px;
-    font-size: 17px;
+    font-size: 25px; /* 모바일 폰트 크기는 유지하여 가독성을 확보합니다. */
   }
 }

@@ -1,12 +1,19 @@
-// src/pages/VisitPage.js
+// src/pages/VisitPage.js (수정된 코드)
 
 import React from 'react';
-import './VisitPage.css'; // VisitPage 전용 CSS를 불러옵니다.
-import logo from '../kiosk_ikon.png'; // 로고 경로가 변경되었습니다.
+import { Link } from 'react-router-dom'; // 페이지 이동을 위한 Link를 import 합니다.
+import './VisitPage.css';
+import logo from '../kiosk_ikon.png';
+import backIcon from '../arrow_back.png'; // ✨ 1. 방금 저장한 뒤로가기 아이콘을 불러옵니다.
 
 function VisitPage() {
   return (
     <div className="container">
+      {/* ✨ 2. 뒤로가기 버튼을 Link 태그로 감싸서 추가합니다. */}
+      <Link to="/" className="back-button">
+        <img src={backIcon} alt="뒤로가기" className="back-icon" />
+      </Link>
+
       <header className="header">
         <img src={logo} alt="로고" className="logo-img" />
       </header>
