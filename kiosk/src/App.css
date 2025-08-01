@@ -1,4 +1,4 @@
-/* src/App.css */
+/* src/App.css (전체 코드) */
 
 body, html {
   margin: 0;
@@ -21,7 +21,6 @@ body, html {
   background-color: #e0eaf6;
   background-image:
     linear-gradient(rgba(224, 234, 246, 0.7), rgba(224, 234, 246, 0.7)),
-    /* 사용하신다고 했던 배경 이미지를 사용합니다. */
     url('background.jpg'); 
   background-size: cover;
   background-position: center;

@@ -1,22 +1,24 @@
-// src/pages/HomePage.js
+// src/pages/HomePage.js (전체 코드)
 
 import React from 'react';
-import { Link } from 'react-router-dom'; // Link를 import 합니다.
-import './HomePage.css'; // HomePage 전용 CSS를 불러옵니다.
-import logo from '../kiosk_ikon.png'; // 로고 경로가 변경되었습니다.
+import { Link } from 'react-router-dom';
+import './HomePage.css';
+import logo from '../kiosk_ikon.png';
 
 function HomePage() {
+  // ✨ className에 "container"와 "home-container"를 둘 다 넣어줍니다. (띄어쓰기로 구분)
   return (
-    <div className="container">
+    <div className="container home-container"> 
       <header className="header">
         <img src={logo} alt="로고" className="logo-img" />
       </header>
       <main className="main-content">
-        {/* button을 Link로 감싸서 클릭 시 페이지 이동이 되게 합니다. */}
         <Link to="/visit">
           <button className="btn">시설 방문</button>
         </Link>
-        <button className="btn">시설 예약</button>
+        <Link to="/reservation">
+          <button className="btn">시설 예약</button>
+        </Link>
       </main>
     </div>
   );
