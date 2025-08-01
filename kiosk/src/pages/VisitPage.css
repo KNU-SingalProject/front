@@ -1,48 +1,22 @@
-/* src/pages/VisitPage.css (수정된 코드) */
+/* src/pages/VisitPage.css (완벽한 왼쪽 정렬 최종 버전) */
 
-/* ✨ 1. 부모 요소에 position: relative;를 추가하여 자식 요소의 위치 기준점으로 만듭니다. */
-.container {
+.visit-page-container {
     position: relative;
   }
-  
-  /* ✨ 2. 뒤로가기 버튼의 위치와 스타일을 지정합니다. */
-  .back-button {
-    position: absolute; /* 부모 요소를 기준으로 절대 위치 지정 */
-    top: 30px;         /* 위에서 30px 떨어짐 */
-    left: 30px;        /* 왼쪽에서 30px 떨어짐 */
-    z-index: 10;       /* 다른 요소들보다 위에 보이도록 설정 */
-  }
-  
-  .back-icon {
-    width: 50px;
-    height: 50px;
-    cursor: pointer;
-    transition: opacity 0.2s;
-  }
-  
-  .back-icon:hover {
-    opacity: 0.7;
-  }
-  
-  
-  /* --- 기존 스타일 (변경 없음) --- */
-  .header {
+  .visit-page-container .header {
     margin-bottom: 20px;
   }
-  
-  .logo-img {
+  .visit-page-container .logo-img {
     width: 90%;
     max-width: 400px;
     height: auto;
   }
-  
-  .subtitle {
+  .visit-page-container .subtitle {
     color: #555;
     font-size: 16px;
     margin-bottom: 30px;
   }
-  
-  .visit-form {
+  .visit-page-container .visit-form {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -50,8 +24,7 @@
     width: 100%;
     max-width: 400px;
   }
-  
-  .input-field {
+  .visit-page-container .input-field {
     width: 100%;
     padding: 15px 20px;
     border: 1px solid #ddd;
@@ -59,12 +32,10 @@
     font-size: 16px;
     box-sizing: border-box;
   }
-  
-  .input-field::placeholder {
+  .visit-page-container .input-field::placeholder {
     color: #aaa;
   }
-  
-  .submit-btn {
+  .visit-page-container .submit-btn {
     width: 100%;
     padding: 15px 20px;
     background-color: #5a9ad5;
@@ -77,19 +48,77 @@
     transition: background-color 0.3s;
     margin-top: 15px;
   }
-  
-  .submit-btn:hover {
+  .visit-page-container .submit-btn:hover {
     background-color: #4a8ac4;
   }
+  .back-button {
+    position: absolute;
+    top: 30px;
+    left: 30px;
+    z-index: 10;
+  }
+  .back-icon {
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .back-icon:hover {
+    opacity: 0.7;
+  }
   
-  /* ✨ 3. 반응형 디자인에도 뒤로가기 버튼 위치를 조정합니다. */
+  /* --- 생년월일 입력창 관련 스타일 --- */
+  .date-input-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* 모든 요소를 왼쪽부터 정렬 */
+    gap: 8px; /* 요소들 사이의 간격을 약간 좁힘 */
+    width: 100%;
+    padding: 15px 20px;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    background-color: white;
+    box-sizing: border-box;
+  }
+  
+  .date-input-container span {
+    font-size: 18px;
+    color: #888;
+  }
+  
+  .date-input-part {
+    border: none;
+    background: none;
+    font-size: 16px;
+    text-align: left; /* 모든 텍스트를 왼쪽 정렬 */
+    padding: 0;
+  }
+  
+  /* ✨ YYYY, MM, DD 모든 입력창에 명확한 고정 너비를 부여합니다. */
+  .date-input-part.year {
+    width: 50px;
+  }
+  .date-input-part.month {
+    width: 30px;
+  }
+  .date-input-part.day {
+    width: 30px;
+  }
+  
+  .date-input-part:focus {
+    outline: none;
+  }
+  
+  
+  /* --- 전화번호 선택 관련 스타일 --- */
+  .phone-selection-form { margin-top: 20px; }
+  .phone-selection-list { list-style: none; padding: 0; margin: 0 0 20px 0; width: 100%; background-color: white; border: 1px solid #ddd; border-radius: 12px; padding: 10px; }
+  .phone-selection-list li { padding: 10px 15px; display: flex; align-items: center; font-size: 18px; }
+  .phone-selection-list li input[type="radio"] { margin-right: 15px; width: 20px; height: 20px; }
+  .phone-selection-list li label { cursor: pointer; }
+  
+  /* --- 반응형 관련 스타일 --- */
   @media (max-width: 768px) {
-    .back-button {
-      top: 20px;
-      left: 20px;
-    }
-    .back-icon {
-      width: 28px;
-      height: 28px;
-    }
+    .back-button { top: 20px; left: 20px; }
+    .back-icon { width: 28px; height: 28px; }
   }

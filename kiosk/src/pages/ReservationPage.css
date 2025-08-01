@@ -119,3 +119,11 @@
       top: 80px;
     }
   }
+  .submit-btn:disabled {
+    background-color: #a0c8ed; /* 비활성화 시 버튼 색 */
+    cursor: not-allowed; /* 비활성화 시 마우스 커서 모양 */
+  }
+  
+  .disabled-link {
+    cursor: not-allowed;
+  }
