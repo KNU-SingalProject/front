@@ -127,3 +127,15 @@
   .disabled-link {
     cursor: not-allowed;
   }
+  .option-card.disabled {
+    filter: grayscale(100%); /* 흑백 처리 */
+    opacity: 0.6; /* 반투명 처리 */
+    cursor: not-allowed; /* 마우스 커서를 금지 모양으로 변경 */
+    background-color: #f8f9fa; /* 배경색을 약간 회색으로 */
+  }
+  
+  /* 비활성화된 카드는 hover 효과를 제거 */
+  .option-card.disabled:hover {
+    transform: none;
+    box-shadow: none;
+  }

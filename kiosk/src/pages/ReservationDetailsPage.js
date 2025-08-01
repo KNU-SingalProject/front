@@ -1,4 +1,4 @@
-// src/pages/ReservationDetailsPage.js (에러 모달 닫기 로직 수정 최종 버전)
+// src/pages/ReservationDetailsPage.js (multi-confirm API 적용 최종 버전 - 전체 코드)
 
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
@@ -22,7 +22,8 @@ const formatBirthDate = (birth) => {
 function ReservationDetailsPage() {
   const location = useLocation();
   const navigate = useNavigate();
-  const facility = location.state?.facility || 'OOO';
+  const facilityId = location.state?.facilityId || 0;
+  const facilityName = location.state?.facilityName || 'OOO';
 
   const [reservists, setReservists] = useState([]);
   const [name, setName] = useState('');
@@ -38,40 +39,21 @@ function ReservationDetailsPage() {
   const [successMessage, setSuccessMessage] = useState('');
 
   const showErrorModal = (message) => { setErrorMessage(message); setIsErrorModalOpen(true); };
+  const closeErrorModal = () => { setIsErrorModalOpen(false); setErrorMessage(''); };
   const showSuccessModalWithMessage = (message) => { setSuccessMessage(message); setIsSuccessModalOpen(true); };
   const closeModalAndNavigateHome = () => { setIsSuccessModalOpen(false); navigate('/'); };
   const closePhoneModal = () => { setIsPhoneModalOpen(false); setPhoneOptions([]); setPendingReservist(null); };
 
-  // ✨ 1. 에러 모달을 닫기만 하는 전용 함수를 만듭니다. (홈으로 이동하지 않습니다)
-  const closeErrorModal = () => {
-    setIsErrorModalOpen(false);
-    setErrorMessage(''); // 에러 메시지 상태를 초기화합니다.
-  };
-
   const handleAddReservist = async () => {
     const trimmedName = name.trim();
     const trimmedBirth = birth.trim();
-
-    if (trimmedName === '' || trimmedBirth === '') {
-      showErrorModal('이름과 생년월일을 모두 입력해주세요.');
-      return;
-    }
-    if (reservists.length >= 4) {
-      showErrorModal('최대 4명까지만 추가할 수 있습니다.');
-      return;
-    }
-
+    if (trimmedName === '' || trimmedBirth === '') { showErrorModal('이름과 생년월일을 모두 입력해주세요.'); return; }
+    if (reservists.length >= 4) { showErrorModal('최대 4명까지만 추가할 수 있습니다.'); return; }
     const formattedBirth = formatBirthDate(trimmedBirth);
-    if (!formattedBirth) {
-      showErrorModal('생년월일 6자리를 올바르게 입력해주세요.');
-      return;
-    }
-
+    if (!formattedBirth) { showErrorModal('생년월일 6자리를 올바르게 입력해주세요.'); return; }
     const payload = { name: trimmedName, birth: formattedBirth };
-
     try {
       const response = await axios.post('http://43.201.162.230:8000/users/log-in', payload);
-
       if (response.data && Array.isArray(response.data.phone_numbers) && response.data.phone_numbers.length > 0) {
         setPendingReservist({ name: trimmedName, birth: trimmedBirth });
         setPhoneOptions(response.data.phone_numbers);
@@ -79,27 +61,21 @@ function ReservationDetailsPage() {
       } else {
         const newUser = { name: trimmedName, birth: trimmedBirth, phone: null };
         const isAlreadyAdded = reservists.some(p => p.name === newUser.name && p.birth === newUser.birth && p.phone === null);
-        if(isAlreadyAdded) {
-            showErrorModal('이미 명단에 추가된 사용자입니다.');
-            return;
-        }
+        if (isAlreadyAdded) { showErrorModal('이미 명단에 추가된 사용자입니다.'); return; }
         setReservists([...reservists, newUser]);
         setName('');
         setBirth('');
       }
     } catch (error) {
       console.error('회원 검증 중 오류 발생:', error);
-      if (error.response && error.response.status === 404) {
-        showErrorModal('등록되지 않은 회원입니다. 추가할 수 없습니다.');
-      } else {
-        showErrorModal('회원 확인 중 오류가 발생했습니다.');
-      }
+      if (error.response && error.response.status === 404) { showErrorModal('등록되지 않은 회원입니다. 추가할 수 없습니다.'); } 
+      else { showErrorModal('회원 확인 중 오류가 발생했습니다.'); }
     }
   };
 
   const handlePhoneConfirm = (selectedPhone) => {
     const isAlreadyAdded = reservists.some(p => p.phone === selectedPhone);
-    if(isAlreadyAdded) {
+    if (isAlreadyAdded) {
       showErrorModal('해당 전화번호의 사용자는 이미 명단에 있습니다.');
       closePhoneModal();
       return;
@@ -109,34 +85,104 @@ function ReservationDetailsPage() {
     setBirth('');
     closePhoneModal();
   };
-
-  const handleCompleteReservation = () => {
+  
+  const handleCompleteReservation = async () => {
     if (reservists.length === 0) {
       showErrorModal('최소 한 명 이상의 예약자를 추가해야 합니다.');
       return;
     }
-    const nameList = reservists.map(person => `${person.name}님`);
-    const formattedNames = nameList.join(', ');
-    const finalMessage = `${formattedNames} 예약을 완료했습니다!`;
-    showSuccessModalWithMessage(finalMessage);
+
+    const hasUserWithPhone = reservists.some(person => person.phone !== null);
+    const isSinglePerson = reservists.length === 1;
+    
+    let apiUrl = '';
+    let payload;
+
+    if (hasUserWithPhone) {
+      if (isSinglePerson) {
+        apiUrl = 'http://43.201.162.230:8000/facility/confirm';
+        const person = reservists[0];
+        payload = {
+          facility_id: facilityId,
+          name: person.name,
+          birth: formatBirthDate(person.birth),
+          phone: person.phone,
+        };
+      } else {
+        apiUrl = 'http://43.201.162.230:8000/facility/multi-confirm';
+        payload = {
+          facility_id: facilityId,
+          members: reservists.map(person => {
+            const data = {
+              name: person.name,
+              birth: formatBirthDate(person.birth),
+            };
+            if (person.phone) {
+              data.phone = person.phone;
+            }
+            return data;
+          })
+        };
+      }
+    } else {
+      if (isSinglePerson) {
+        apiUrl = 'http://43.201.162.230:8000/facility/reserve';
+        const person = reservists[0];
+        payload = {
+          facility_id: facilityId,
+          name: person.name,
+          birth: formatBirthDate(person.birth),
+        };
+      } else {
+        apiUrl = 'http://43.201.162.230:8000/facility/multi-reserve';
+        payload = {
+          facility_id: facilityId,
+          members: reservists.map(person => ({
+            name: person.name,
+            birth: formatBirthDate(person.birth),
+          }))
+        };
+      }
+    }
+
+    console.log(`API URL: ${apiUrl}`);
+    console.log("백엔드로 전송할 최종 데이터 (Payload):", JSON.stringify(payload, null, 2));
+
+    try {
+      await axios.post(apiUrl, payload);
+      const nameList = reservists.map(person => `${person.name}님`);
+      const formattedNames = nameList.join(', ');
+      const finalMessage = `${formattedNames} 예약을 완료했습니다!`;
+      showSuccessModalWithMessage(finalMessage);
+    } catch (error) {
+      console.error('예약 완료 중 오류 발생:', error);
+      if (error.response && error.response.status === 422) {
+        const errorDetail = error.response.data?.detail;
+        if(typeof errorDetail === 'string') {
+            showErrorModal(errorDetail);
+        } else {
+            showErrorModal('입력된 정보가 서버의 규칙과 맞지 않습니다.');
+        }
+      } else {
+        showErrorModal('예약 완료에 실패했습니다. 관리자에게 문의하세요.');
+      }
+    }
   };
 
   return (
     <div className="container details-container">
       {isPhoneModalOpen && <PhoneSelectionModal phoneNumbers={phoneOptions} onConfirm={handlePhoneConfirm} onCancel={closePhoneModal} />}
       {isSuccessModalOpen && <SuccessModal message={successMessage} onClose={closeModalAndNavigateHome} />}
-      
-      {/* ✨ 2. ErrorModal의 onClose prop에 새로운 함수를 연결합니다. */}
       {isErrorModalOpen && <ErrorModal message={errorMessage} onClose={closeErrorModal} />}
 
       <Link to="/reservation" className="back-button"> <img src={backIcon} alt="뒤로가기" className="back-icon" /> </Link>
       <Link to="/" className="home-button"> <img src={homeIcon} alt="홈으로" className="home-icon" /> </Link>
       
-      <h1 className="details-title">{facility} 시설 예약</h1>
+      <h1 className="details-title">{facilityName} 시설 예약</h1>
 
       <main className="details-content">
         <section className="reservist-list-section">
-          <h2>{facility} 예약자 명단</h2>
+          <h2>{facilityName} 예약자 명단</h2>
           <div className={`reservist-grid reservist-grid-${reservists.length}`}>
             {reservists.length > 0 ? (
               reservists.map((person, index) => (
@@ -149,7 +195,6 @@ function ReservationDetailsPage() {
             )}
           </div>
         </section>
-
         <section className="reservation-form-section">
           <p className="form-guide">시설을 같이 이용할 분들 모두 적어주세요.</p>
           <input type="text" placeholder="이름" className="details-input" value={name} onChange={(e) => setName(e.target.value)} />
