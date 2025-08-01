@@ -1,4 +1,4 @@
-// src/pages/ReservationDetailsPage.js (multi-confirm API 적용 최종 버전 - 전체 코드)
+// src/pages/ReservationDetailsPage.js (뒤로가기 기능 수정 최종 버전)
 
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
@@ -169,14 +169,29 @@ function ReservationDetailsPage() {
     }
   };
 
+  const handleBackClick = async () => {
+    try {
+      const response = await axios.get('http://43.201.162.230:8000/facility/facilities/status');
+      navigate('/reservation', { state: { facilityStatuses: response.data } });
+    } catch (error) {
+      console.error('시설 상태 정보를 불러오는 중 오류 발생:', error);
+      showErrorModal('시설 상태 정보를 불러올 수 없습니다. 잠시 후 다시 시도해주세요.');
+    }
+  };
+
   return (
     <div className="container details-container">
       {isPhoneModalOpen && <PhoneSelectionModal phoneNumbers={phoneOptions} onConfirm={handlePhoneConfirm} onCancel={closePhoneModal} />}
       {isSuccessModalOpen && <SuccessModal message={successMessage} onClose={closeModalAndNavigateHome} />}
       {isErrorModalOpen && <ErrorModal message={errorMessage} onClose={closeErrorModal} />}
 
-      <Link to="/reservation" className="back-button"> <img src={backIcon} alt="뒤로가기" className="back-icon" /> </Link>
-      <Link to="/" className="home-button"> <img src={homeIcon} alt="홈으로" className="home-icon" /> </Link>
+      <button onClick={handleBackClick} className="back-button icon-button">
+        <img src={backIcon} alt="뒤로가기" className="back-icon" />
+      </button>
+
+      <Link to="/" className="home-button">
+        <img src={homeIcon} alt="홈으로" className="home-icon" />
+      </Link>
       
       <h1 className="details-title">{facilityName} 시설 예약</h1>
 

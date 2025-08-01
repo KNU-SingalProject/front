@@ -117,3 +117,9 @@
     .reservist-list-section, .reservation-form-section { width: 90%; max-width: 450px; }
     .reservation-form-section { margin-top: 20px; }
   }
+  .icon-button {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+  }

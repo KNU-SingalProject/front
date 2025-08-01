@@ -1,4 +1,4 @@
-// src/pages/VisitPage.js (SuccessModal 변경사항 반영 최종 버전)
+// src/pages/VisitPage.js (방문 기록 체크 로직 수정 최종 버전 - 전체 코드)
 
 import React, { useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -10,24 +10,18 @@ import SuccessModal from '../components/SuccessModal';
 import ErrorModal from '../components/ErrorModal';
 
 function VisitPage() {
-  // --- 상태 관리 ---
   const [birth, setBirth] = useState({ year: '', month: '', day: '' });
   const [name, setName] = useState('');
   const [phoneNumbers, setPhoneNumbers] = useState([]);
   const [selectedPhone, setSelectedPhone] = useState('');
-  
-  // ✨ 1. Modal state 변수 이름을 더 명확하게 변경
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
-
   const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-
   const navigate = useNavigate();
   const monthInputRef = useRef(null);
   const dayInputRef = useRef(null);
 
-  // --- 함수 로직 ---
   const handleBirthChange = (e, field) => {
     const { value } = e.target;
     if (isNaN(value)) return;
@@ -36,16 +30,14 @@ function VisitPage() {
     if (field === 'month' && value.length === 2) dayInputRef.current.focus();
   };
   
-  // ✨ 2. showSuccessModal 함수가 전체 메시지를 만들도록 수정
-  const showSuccessModal = (responseName) => {
-    setSuccessMessage(`${responseName}님 반갑습니다!`);
+  const showSuccessModal = (message) => {
+    setSuccessMessage(message);
     setIsSuccessModalOpen(true);
   };
   const closeModalAndNavigateHome = () => {
     setIsSuccessModalOpen(false);
     navigate('/');
   };
-
   const showErrorModal = (message) => {
     setErrorMessage(message);
     setIsErrorModalOpen(true);
@@ -65,17 +57,20 @@ function VisitPage() {
     const payload = { name: trimmedName, birth: formattedBirth };
 
     try {
-      const response = await axios.post('http://43.201.162.230:8000/users/log-in', payload);
+      const response = await axios.post('http://43.201.162.230:8000/users/check-in', payload);
       
       if (response.data && Array.isArray(response.data.phone_numbers) && response.data.phone_numbers.length > 0) {
         setPhoneNumbers(response.data.phone_numbers);
       } else {
         const responseName = response.data?.name || trimmedName;
-        showSuccessModal(responseName);
+        if (response.data.visit_log === true) {
+          showErrorModal('센터 방문은 하루에 한 번 가능합니다.');
+        } else {
+          showSuccessModal(`${responseName}님 반갑습니다!`);
+        }
       }
     } catch (error) {
       console.error('사용자 확인 중 오류 발생:', error);
-      
       if (error.response && error.response.status === 404) {
         const notFoundMessage = `${trimmedName}님은 회원이 아닙니다.\n데스크에 회원 요청 바랍니다.`;
         showErrorModal(notFoundMessage);
@@ -102,10 +97,12 @@ function VisitPage() {
     const finalPayload = { name: name.trim(), birth: formattedBirth, phone_number: selectedPhone };
 
     try {
-      const response = await axios.post('http://43.201.162.230:8000/users/log-in', finalPayload);
-      if (response.status === 200 || response.status === 201) {
-        const responseName = response.data?.name || name.trim();
-        showSuccessModal(responseName);
+      const response = await axios.post('http://43.201.162.230:8000/users/check-in', finalPayload);
+      const responseName = response.data?.name || name.trim();
+      if (response.data.visit_log === true) {
+        showErrorModal('센터 방문은 하루에 한 번 가능합니다.');
+      } else {
+        showSuccessModal(`${responseName}님 반갑습니다!`);
       }
     } catch (error) {
       console.error('최종 전송 중 오류 발생:', error);
@@ -121,13 +118,10 @@ function VisitPage() {
     }
   };
 
-  // --- UI 렌더링 ---
   return (
     <div className="container visit-page-container">
-      {/* ✨ 3. prop 이름을 message로, state 변수 이름도 successMessage로 수정 */}
       {isSuccessModalOpen && <SuccessModal message={successMessage} onClose={closeModalAndNavigateHome} />}
       {isErrorModalOpen && <ErrorModal message={errorMessage} onClose={closeErrorModal} />}
-
       <Link to="/" className="back-button">
         <img src={backIcon} alt="뒤로가기" className="back-icon" />
       </Link>
